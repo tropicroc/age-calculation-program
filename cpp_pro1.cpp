@@ -101,16 +101,19 @@ public:
     
     // This function calculates the difference between two dates.
     void calculate(DateInput& start, DateInput& end) { 
-        days = 0;
-        months = 0;
-        years = 0;
-        dayst = 0;
-        
         // Loop through each year from the start year to the end year
         for (int y = start.year; y <= end.year; y++) {
             int startMonth = (y == start.year) ? start.month : 1;
             int endMonth = (y == end.year) ? end.month : 12;
             for (int m = startMonth; m <= endMonth; m++) {
+                // same year and same month both the dates
+                if (startMonth==endMonth && start.year==end.year)
+                {
+                    int diff = end.day-start.day;
+                    days+=diff;
+                    dayst+=diff;
+                    break;
+                }
                 if (y == start.year && m == start.month) {
                     // Add days from the start day to the end of the month
                     int diff = daysInMonth(m, y) - start.day;
@@ -143,15 +146,22 @@ public:
   
     void display() {
         cout << "\n\n-----Output-----\n\n";
-        cout << "Number of days lived : " << days << endl;
+        if (days<=0) { days=0; dayst=0; }
+        // resolves the days lived to zero if today's date is less than the date of birth
+        cout << "Number of days lived : " << days;
+        cout << endl;
+        if(!(days<=0))
+        {
         if (years) cout << years << " years ";
         if (months) cout << months << " months ";
         if (dayst) cout << dayst << " days ";
-        cout << "old" << endl;
+        if (years && months && dayst) cout << "old" << endl;
+        }
     }
 };
 
 int main() {
+    cout << "-----Age Calculation Program-----" <<endl;
     DateInput o1; // Date of birth
     DateInput o2; // Current date
     cout << "Enter the date of birth [DD/MM/YYYY] :" << endl;
@@ -163,6 +173,10 @@ int main() {
     
     DateCalculation o3;
     o3.calculate(o1, o2);
+
+    cout << "Inputs : -" <<endl;
+    cout << "Date of birth : " << o1.day << "/" << o1.month << "/" << o1.year  <<endl;
+    cout << "Today's date : " << o2.day << "/" << o2.month << "/" << o2.year   <<endl;
     o3.display();
     
     return 0;
